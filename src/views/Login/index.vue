@@ -87,9 +87,11 @@ export default {
         forbidClick: true
       })
       try {
-        const data = await userLoginAPI(user)
-        console.log(data)
+        const { data: res } = await userLoginAPI(user)
+        console.log(res)
         this.$toast.success('登录成功')
+        this.$store.commit('setUser', res.data)
+        this.$router.push('/my')
       } catch (err) {
         if (err.response.status === 400) {
           this.$toast.fail('手机号或验证码格式错误')

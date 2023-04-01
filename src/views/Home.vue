@@ -1,15 +1,13 @@
 <template>
-  <div id="app">
-    <router-view />
+  <div class="home-container">
+    <div>首页</div>
   </div>
 </template>
+
 <script>
 export default {
-  watch: {
-    $route(value) {
-      console.log(value)
-    }
-  }
+  name: 'HomeView'
 }
 </script>
+
 <style lang="less" scoped></style>
