@@ -21,10 +21,12 @@ export const userInfoAPI = () => {
   return request({
     method: 'GET',
     url: '/v1_0/user'
-    // 发送请求头数据
-    // 注意：该接口需要授权才能访问
-    // headers: {
-    //   Authorization: `Bearer ${store.state.user.token}`
-    // }
+  })
+}
+// 获取用户频道列表
+export const getUserChannelsAPI = () => {
+  return request({
+    method: 'GET',
+    url: '/v1_0/user/channels'
   })
 }

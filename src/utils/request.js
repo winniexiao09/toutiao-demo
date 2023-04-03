@@ -1,18 +1,26 @@
 // 封装axios请求模块
 import axios from 'axios'
 import store from '@/store/index.js'
+import jsonBig from 'json-bigint'
 
 const request = axios.create({
-  baseURL: 'http://toutiao.itheima.net'
+  baseURL: 'http://toutiao.itheima.net',
+  transformResponse: [
+    (data) => {
+      try {
+        return jsonBig.parse(data)
+      } catch (err) {
+        return data
+      }
+    }
+  ]
 })
-
-request.interceptors.request.use(
+// 配置请求拦截器
+axios.interceptors.request.use(
   (config) => {
-    // config是本次请求的配置对象
-    // config里有一个属性：headers
     const { user } = store.state
     if (user && user.token) {
-      config.headers.Authorization = `bearer ${user.token}`
+      config.headers.Authorization = `Bearer ${user.token}`
     }
     return config
   },
@@ -20,5 +28,6 @@ request.interceptors.request.use(
     return Promise.reject(error)
   }
 )
+
 // 配置响应拦截器
 export default request

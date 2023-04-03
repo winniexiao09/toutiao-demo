@@ -28,11 +28,6 @@ export default {
   data() {
     return {}
   }
-  // watch: {
-  //   $route(value) {
-  //     console.log(value)
-  //   }
-  // }
 }
 </script>
 

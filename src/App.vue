@@ -5,11 +5,11 @@
 </template>
 <script>
 export default {
-  watch: {
-    $route(value) {
-      console.log(value)
-    }
-  }
+  // watch: {
+  //   $route(value) {
+  //     console.log(value)
+  //   }
+  // }
 }
 </script>
 <style lang="less" scoped></style>
