@@ -103,10 +103,8 @@ export default {
       try {
         const { data: res } = await userInfoAPI()
         this.userInfo = res.data
-        console.log(res.data)
       } catch (err) {
-        // this.$toast.fail('获取数据失败,请稍后重试')
-        console.log('获取用户自己信息失败', err)
+        this.$toast.fail('获取数据失败,请稍后重试')
       }
     }
   }
