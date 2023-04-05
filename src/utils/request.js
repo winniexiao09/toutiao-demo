@@ -6,7 +6,7 @@ const request = axios.create({
   baseURL: 'http://toutiao.itheima.net'
 })
 // 配置请求拦截器
-axios.interceptors.request.use(
+request.interceptors.request.use(
   (config) => {
     const { user } = store.state
     if (user && user.token) {

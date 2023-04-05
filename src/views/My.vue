@@ -101,12 +101,10 @@ export default {
     },
     async getUserInfo() {
       try {
-        const { data } = await userInfoAPI()
-        console.log(data)
-        this.userInfo = data
+        const { data: res } = await userInfoAPI()
+        this.userInfo = res.data
       } catch (err) {
-        // this.$toast.fail('获取数据失败,请稍后重试')
-        console.log('获取用户自己信息失败', err)
+        this.$toast.fail('获取数据失败,请稍后重试')
       }
     }
   }
