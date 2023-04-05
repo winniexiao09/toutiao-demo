@@ -1,7 +1,7 @@
 <template>
   <div class="qa-container">
     问答
-    <p></p>
+    <p>测试项目</p>
     <router-link to="/">去首页</router-link>
   </div>
 </template>
