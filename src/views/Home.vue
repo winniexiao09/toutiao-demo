@@ -44,7 +44,7 @@
       position="bottom"
       :style="{ height: '100%' }"
     >
-      <ChannelEdit></ChannelEdit>
+      <ChannelEdit :active="active"></ChannelEdit>
     </van-popup>
     <!-- /频道编辑弹出层 -->
   </div>

@@ -8,13 +8,15 @@
     <van-grid class="my-grid" :gutter="10">
       <van-grid-item
         class="grid-item"
-        v-for="channel in channels"
+        v-for="(channel, index) in channels"
         :key="channel.id"
-        :text="channel.name"
         icon="close"
-      />
+      >
+        <span class="text" :class="{ active: index === active }" slot="text">{{
+          channel.name
+        }}</span>
+      </van-grid-item>
     </van-grid>
-
     <!-- /我的频道 -->
     <!-- 频道编辑 -->
     <van-cell class="edit-cell" :border="false">
@@ -37,6 +39,12 @@
 import { mapState, mapActions } from 'vuex'
 export default {
   name: 'ChannelEdit',
+  props: {
+    active: {
+      type: Number,
+      required: true
+    }
+  },
   computed: {
     ...mapState(['channels'])
   },
@@ -66,16 +74,21 @@ export default {
   .edit-cell {
     margin: 40px auto;
   }
+
   /deep/ .grid-item {
     width: 160px;
     height: 86px;
     .van-grid-item__content {
       white-space: nowrap;
       background-color: #f4f5f6;
-      .van-grid-item__text {
+      .van-grid-item__text,
+      .text {
         margin-top: 0;
         font-size: 28px;
         color: #222;
+      }
+      .active {
+        color: red;
       }
     }
   }
