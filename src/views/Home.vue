@@ -9,6 +9,7 @@
         round
         slot="title"
         icon="search"
+        @click="$router.push('/search')"
         >搜索</van-button
       >
     </van-nav-bar>
