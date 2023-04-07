@@ -44,33 +44,56 @@
       position="bottom"
       :style="{ height: '100%' }"
     >
-      <ChannelEdit :active="active"></ChannelEdit>
+      <ChannelEdit
+        :active="active"
+        @update-active="onUpdateActive"
+      ></ChannelEdit>
     </van-popup>
     <!-- /频道编辑弹出层 -->
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 import ArticleList from '@/components/Home/ArticleList.vue'
 import ChannelEdit from '@/components/Home/ChannelEdit.vue'
+import { getItem } from '@/utils/storage.js'
 export default {
   name: 'HomeView',
   data() {
     return {
+      // 频道列表的索引
       active: 0,
       // 控制编辑频道弹出层的状态
       isChannelEditShow: false
     }
   },
   computed: {
-    ...mapState(['channels'])
+    ...mapState(['user', 'channels'])
   },
   created() {
-    this.$store.dispatch('getUserChannels')
+    if (this.user) {
+      this.$store.dispatch('getUserChannels')
+    } else {
+      // 未登录，判断是否有本地的频道列表数据
+      const localChannels = getItem('TOUTIAO-CHANNELS')
+      if (localChannels) {
+        this.$store.commit('updateUserChannels', localChannels)
+      } else {
+        this.$store.dispatch('getUserChannels')
+      }
+    }
   },
   methods: {
-    ...mapActions(['getUserChannels'])
+    ...mapActions(['getUserChannels']),
+    ...mapMutations(['updateUserChannels']),
+    // isChannelEditShow这个参数有个默认值，是ES6语法，你传了，用你传的，你没传，用传过来的值
+    onUpdateActive(index, isChannelEditShow = true) {
+      // 更新激活的频道项
+      this.active = index
+      // 关闭编辑频道弹层
+      this.isChannelEditShow = isChannelEditShow
+    }
   },
   components: { ArticleList, ChannelEdit }
 }

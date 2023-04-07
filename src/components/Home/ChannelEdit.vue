@@ -3,15 +3,26 @@
     <!-- 我的频道 -->
     <van-cell class="edit-cell" :border="false">
       <div slot="title" class="text">我的频道</div>
-      <van-button class="edit-btn" size="mini" round>编辑</van-button>
+      <van-button
+        class="edit-btn"
+        size="mini"
+        round
+        @click="isEdit = !isEdit"
+        >{{ isEdit ? '完成' : '编辑' }}</van-button
+      >
     </van-cell>
     <van-grid class="my-grid" :gutter="10">
       <van-grid-item
         class="grid-item"
         v-for="(channel, index) in channels"
         :key="channel.id"
-        icon="close"
+        @click="onMyChannelClick(channel, index)"
       >
+        <van-icon
+          v-show="isEdit && !fixedChannel.includes(channel.id)"
+          slot="icon"
+          name="close"
+        ></van-icon>
         <span class="text" :class="{ active: index === active }" slot="text">{{
           channel.name
         }}</span>
@@ -26,9 +37,10 @@
       <van-grid-item
         class="grid-item"
         icon="plus"
-        v-for="value in 8"
-        :key="value"
-        text="文字文字"
+        v-for="rechannel in recommendChannels"
+        :key="rechannel.id"
+        :text="rechannel.name"
+        @click="onAddChannel(rechannel)"
       />
     </van-grid>
     <!-- /频道编辑 -->
@@ -37,8 +49,18 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import { addUserChannelAPI, deleteUserChannelAPI } from '@/api/channelAPI.js'
+import { setItem } from '@/utils/storage.js'
 export default {
   name: 'ChannelEdit',
+  data() {
+    return {
+      // 控制编辑状态的显示
+      isEdit: false,
+      // 固定频道，不允许删除
+      fixedChannel: [0, 1]
+    }
+  },
   props: {
     active: {
       type: Number,
@@ -46,13 +68,75 @@ export default {
     }
   },
   computed: {
-    ...mapState(['channels'])
+    // 所有频道
+    ...mapState(['user', 'allchannels', 'channels']),
+    // 推荐频道=所有频道-用户频道
+    recommendChannels() {
+      return this.allchannels.filter((allchannel) => {
+        return !this.channels.find((channel) => {
+          return channel.id === allchannel.id
+        })
+      })
+    }
   },
   created() {
     this.$store.dispatch('getUserChannels')
+    this.$store.dispatch('getAllChannels')
   },
   methods: {
-    ...mapActions(['getUserChannels'])
+    ...mapActions(['getUserChannels', 'getAllChannels']),
+    async onAddChannel(rechannel) {
+      this.channels.push(rechannel)
+      // 数据持久化
+      if (this.user) {
+        // 用户已登录，请求接口存储
+        try {
+          await addUserChannelAPI({
+            id: rechannel.id, // 用户频道ID
+            seq: this.channels.length // 序号
+          })
+        } catch (err) {
+          this.$toast('保存失败，请稍后重试')
+        }
+      } else {
+        // 用户未登录，本地存储
+        setItem('TOUTIAO-CHANNELS', this.channels)
+      }
+    },
+    // 点击我的频道项，触发的方法
+    onMyChannelClick(channel, index) {
+      if (this.isEdit) {
+        // 1.如果是固定频道项，不能删除
+        if (this.fixedChannel.includes(index)) {
+          return
+        }
+        // 2.如果删除active前面的元素，需要添加自定义事件传值
+        if (index <= this.active) {
+          this.$emit('update-active', this.active - 1)
+        }
+        // 3.删除频道项
+        this.channels.splice(index, 1)
+        // 4.数据持久化
+        this.deleteChannel(channel)
+      } else {
+        // 切换频道项
+        this.$emit('update-active', index, false)
+      }
+    },
+    // 删除用户频道
+    async deleteChannel(channel) {
+      try {
+        if (this.user) {
+          // 用户已登录，请求接口存储
+          await deleteUserChannelAPI(channel.id)
+        } else {
+          // 用户未登录，本地存储
+          setItem('TOUTIAO-CHANNELS', this.channels)
+        }
+      } catch (error) {
+        this.$toast('删除频道失败，请稍后重试')
+      }
+    }
   }
 }
 </script>
@@ -93,6 +177,9 @@ export default {
     }
   }
   /deep/ .my-grid {
+    .van-grid-item__icon-wrapper {
+      position: unset;
+    }
     .van-icon-close {
       position: absolute;
       top: -10px;
