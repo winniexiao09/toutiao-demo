@@ -57,6 +57,7 @@ export default {
       // 要求不要有重复历史记录、最新的排在最前面
       const index = this.searchHistories.indexOf(val)
       if (index !== -1) {
+        // 数组里已经有这个数据,则删除
         this.searchHistories.splice(index, 1)
       }
       this.searchHistories.unshift(val)

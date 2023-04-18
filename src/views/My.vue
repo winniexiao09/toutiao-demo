@@ -18,7 +18,7 @@
           <div class="count">{{ userInfo.art_count }}</div>
           <div class="text">头条</div>
         </div>
-        <div class="data-item">
+        <div class="data-item" @click="$router.push('/followdetail')">
           <div class="count">{{ userInfo.follow_count }}</div>
           <div class="text">关注</div>
         </div>

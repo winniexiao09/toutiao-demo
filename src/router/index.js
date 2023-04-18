@@ -39,6 +39,18 @@ const routes = [
     path: '/search',
     name: 'search',
     component: () => import('@/views/Search.vue')
+  },
+  {
+    // 动态路由，添加props传参
+    path: '/article/:articleId',
+    name: 'article',
+    component: () => import('@/views/Article.vue'),
+    props: true
+  },
+  {
+    path: '/followdetail',
+    name: 'followdetail',
+    component: () => import('@/views/FollowDetail.vue')
   }
 ]
 

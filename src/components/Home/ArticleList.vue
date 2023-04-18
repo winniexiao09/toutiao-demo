@@ -18,6 +18,7 @@
           v-for="(article, index) in list"
           :key="index"
           :article="article"
+          @click="$router.push('')"
         ></ArticleItem>
         <!-- <van-cell v-for="item in list" :key="item.art_id" :title="item.title" /> -->
       </van-list>
