@@ -31,7 +31,7 @@ export default {
   watch: {
     searchText: {
       // eslint-disable-next-line space-before-function-paren
-      handler: debounce(function (newval) {
+      handler: debounce(function(newval) {
         this.loadSearchSuggestions(newval)
       }, 200),
       immediate: true

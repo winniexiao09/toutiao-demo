@@ -43,12 +43,23 @@
           v-html="article.content"
         ></div>
         <van-divider>正文结束</van-divider>
+        <!-- 文章评论组件 -->
+        <CommentList
+          :source="article.art_id"
+          :list="commentList"
+          @onload-success="totalCommentCount = $event.total_count"
+          @reply-click="onReplyClick"
+        ></CommentList>
         <!-- 底部区域 -->
         <div class="article-bottom">
-          <van-button class="comment-btn" round type="default" size="small"
+          <van-button
+            class="comment-btn"
+            round
+            type="default"
+            @click="isCommentPopupShow = true"
             >写评论</van-button
           >
-          <van-icon name="comment-o" color="#777" badge="123" />
+          <van-icon name="comment-o" color="#777" :badge="totalCommentCount" />
           <!-- 收藏文章组件 -->
           <CollectArticle
             v-model="article.is_collected"
@@ -60,6 +71,25 @@
             :article-id="article.art_id"
           ></LikeArticle>
           <van-icon name="share" color="#777" />
+          <!-- 发布评论的弹出层 -->
+          <van-popup v-model="isCommentPopupShow" position="bottom">
+            <CommentPost
+              :target="article.art_id"
+              @onpost-success="onPostCommentSuccess"
+            ></CommentPost>
+          </van-popup>
+          <!-- 回复评论的弹出层 -->
+          <van-popup
+            v-model="isReplyPopupShow"
+            position="bottom"
+            style="height: 100%"
+          >
+            <CommentReply
+              v-if="isReplyPopupShow"
+              :comment="currentComment"
+              @close="isReplyPopupShow = false"
+            ></CommentReply>
+          </van-popup>
         </div>
       </div>
       <!-- 加载失败:404 -->
@@ -83,16 +113,41 @@ import { ImagePreview } from 'vant'
 import FollowUser from '@/components/User/FollowUser.vue'
 import CollectArticle from '@/components/User/CollectArticle.vue'
 import LikeArticle from '@/components/User/LikeArticle.vue'
+import CommentList from '@/components/Comment/CommentList.vue'
+import CommentPost from '@/components/Comment/CommentPost.vue'
+import CommentReply from '@/components/Comment/CommentReply.vue'
 export default {
   name: 'Article',
   data() {
     return {
       loading: true,
       errStatus: 0,
-      article: {}
+      article: {},
+      // 总评论数
+      totalCommentCount: 0,
+      // 控制发布评论弹框的显示状态
+      isCommentPopupShow: false,
+      // 评论列表
+      commentList: [],
+      // 控制回复评论弹框的显示状态
+      isReplyPopupShow: false,
+      // 当前点击回复的评论项
+      currentComment: {}
     }
   },
-  components: { FollowUser, CollectArticle, LikeArticle },
+  components: {
+    FollowUser,
+    CollectArticle,
+    LikeArticle,
+    CommentList,
+    CommentPost,
+    CommentReply
+  },
+  provide() {
+    return {
+      articleId: this.articleId
+    }
+  },
   props: {
     articleId: {
       type: [Number, String],
@@ -138,6 +193,20 @@ export default {
           })
         }
       })
+    },
+    onPostCommentSuccess(data) {
+      // 关闭弹出层
+      this.isCommentPopupShow = false
+      // 把评论内容展示在列表中
+      this.commentList.unshift(data.new_obj)
+      // 评论总数量加1
+      this.totalCommentCount++
+    },
+    onReplyClick(comment) {
+      // 把当前点击的评论项保存起来
+      this.currentComment = comment
+      // 展示回复弹出层
+      this.isReplyPopupShow = true
     }
   }
 }

@@ -1,6 +1,13 @@
 <template>
   <div class="layout-container">
-    <router-view></router-view>
+    <keep-alive>
+      <!-- 需要缓存的视图组件 -->
+      <router-view v-if="$route.meta.keepAlive"> </router-view>
+    </keep-alive>
+
+    <!-- 不需要缓存的视图组件 -->
+    <router-view v-if="!$route.meta.keepAlive"> </router-view>
+
     <van-tabbar fixed placeholder route>
       <van-tabbar-item :to="{ name: 'home' }">
         <i slot="icon" class="toutiao toutiao-shouye"></i>

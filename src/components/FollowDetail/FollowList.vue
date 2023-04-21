@@ -8,15 +8,21 @@
       error-text="请求失败，点击重新加载"
       @load="onLoad"
     >
-      <van-cell v-for="item in list" :key="item.art_id" :title="item.title" />
+     <FollowItem
+     v-for="(item,index) in list"
+     :key="index"
+     :follow="item"
+     ></FollowItem>
     </van-list>
   </div>
 </template>
 
 <script>
-import { getUserFollowingAPI } from '@/api/userAPI.js'
+import { getUserFollowAPI } from '@/api/userAPI.js'
+import FollowItem from '@/components/FollowDetail/FollowItem.vue'
 export default {
   name: 'FollowList',
+  components: { FollowItem },
   data() {
     return {
       // 存储列表数据数组
@@ -31,7 +37,7 @@ export default {
     async onLoad() {
       // 1.请求获取数据
       try {
-        const { data: res } = await getUserFollowingAPI({
+        const { data: res } = await getUserFollowAPI({
           page: this.page,
           per_page: 10
         })
@@ -43,7 +49,7 @@ export default {
         // }
 
         // 2.把请求结果数据放到list数组中
-        const { results } = res.data
+        const { results, total_count: totalCount } = res.data
         this.list.push(...results)
 
         // 3.本次数据加载结束后要把加载状态设置为结束
@@ -51,9 +57,8 @@ export default {
         // 4.判断数据是否全部加载完成
         if (results.length) {
           this.page++
-        } else {
-          this.finished = true
         }
+        this.finished = results.length <= totalCount
       } catch (error) {
         // 展示错误提示状态
         this.error = true

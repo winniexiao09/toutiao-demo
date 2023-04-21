@@ -16,7 +16,10 @@ const routes = [
       {
         path: '',
         name: 'home',
-        component: () => import('@/views/Home.vue')
+        component: () => import('@/views/Home.vue'),
+        meta: {
+          keepAlive: true // 需要被缓存
+        }
       },
       {
         path: 'qa',

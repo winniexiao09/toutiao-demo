@@ -60,6 +60,7 @@ export default {
           // 没有关注，点击添加关注
           await addFollowAPI(this.authorId)
         }
+        // 更新视图
         this.$emit('update-isfollowed', !this.isFollowed)
       } catch (err) {
         let message = '操作失败，请重试！'

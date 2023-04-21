@@ -47,3 +47,11 @@ export const deleteFollowAPI = (target) => {
     url: `/v1_0/user/followings/${target}`
   })
 }
+// 获取用户关注列表
+export const getUserFollowAPI = params => {
+  return request({
+    method: 'GET',
+    url: '/v1_0/user/followings',
+    params
+  })
+}
