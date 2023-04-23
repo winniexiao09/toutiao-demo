@@ -1,5 +1,5 @@
 <template>
-  <div class="follow-list">
+  <div class="collect-list">
     <van-list
       v-model="loading"
       :finished="finished"
@@ -9,26 +9,25 @@
       :immediate-check="false"
       @load="onLoad"
     >
-      <FollowItem
+      <CollectItem
         v-for="(item, index) in list"
         :key="index"
-        :follow="item"
-        :active="active"
-      ></FollowItem>
+        :collect="item"
+      ></CollectItem>
     </van-list>
   </div>
 </template>
 
 <script>
-import { getUserFollowAPI, getUserFansAPI } from '@/api/userAPI.js'
-import FollowItem from '@/components/FollowDetail/FollowItem.vue'
+import { getUserCollectAPI, getUserHistoriesAPI } from '@/api/userAPI.js'
+import CollectItem from '@/components/Collect/CollectItem.vue'
 export default {
-  name: 'FollowList',
-  components: { FollowItem },
+  name: 'CollectList',
+  components: { CollectItem },
   props: {
     active: {
       type: Number,
-      default: 0
+      required: true
     }
   },
   data() {
@@ -41,10 +40,6 @@ export default {
       error: false // 控制列表加载失败的提示状态
     }
   },
-  // 因为切换tab时候,渲染展示的是一个list组件
-  // 我们根据active的变化来判断切换了tab页
-  // 如果切换了tab页,我们就要重新请求数据
-  // 所以要监听active的变化,重新请求数据,而且把相关的数据重置
   watch: {
     active() {
       this.list = []
@@ -60,30 +55,26 @@ export default {
   },
   methods: {
     async onLoad() {
-      if (this.loading === true) return
+      // if (this.loading === true) return
       this.loading = true
       // 1.请求获取数据
       const params = { page: this.page, per_page: 10 }
       try {
         const { data: res } =
           this.active === 0
-            ? await getUserFollowAPI(params)
-            : await getUserFansAPI(params)
-
-        // 2.把请求结果数据放到list数组中
-        const { results } = res.data
+            ? await getUserCollectAPI(params)
+            : await getUserHistoriesAPI(params)
+        console.log(res)
+        // 2.把数据放到list列表里
+        const { results, total_count: totalCount } = res.data
         this.list.push(...results)
-        // 3.本次数据加载结束后要把加载状态设置为结束
+        // 3.关闭loading加载状态
         this.loading = false
-        // 4.判断数据是否全部加载完成
-        if (results.length >= 10) {
+        // 4.判断是否还有更多数据,如果没有数据,把finnished改成true
+        if (this.list.length < totalCount) {
           this.page++
         }
-        this.finished = results.length < 10
-
-        // 模拟随即失败的情况
-        // if (Math.random > 0.1) {
-        //   JSON.parse('dnkffdwejin')
+        this.finished = this.list.length >= totalCount
         // }
       } catch (error) {
         // 展示错误提示状态

@@ -18,11 +18,11 @@
           <div class="count">{{ userInfo.art_count }}</div>
           <div class="text">头条</div>
         </div>
-        <div class="data-item" @click="$router.push('/followdetail')">
+        <div class="data-item" @click="$router.push('/followdetail?active=0')">
           <div class="count">{{ userInfo.follow_count }}</div>
           <div class="text">关注</div>
         </div>
-        <div class="data-item">
+        <div class="data-item" @click="$router.push('/followdetail?active=1')">
           <div class="count">{{ userInfo.fans_count }}</div>
           <div class="text">粉丝</div>
         </div>
@@ -44,11 +44,17 @@
 
     <!-- 宫格导航 -->
     <van-grid class="grid-nav" :column-num="2" clickable>
-      <van-grid-item class="grid-item">
+      <van-grid-item
+        class="grid-item"
+        @click="$router.push('/collectdetail?active=0')"
+      >
         <i slot="icon" class="toutiao toutiao-shoucang"></i>
         <span slot="text" class="text">收藏</span>
       </van-grid-item>
-      <van-grid-item class="grid-item">
+      <van-grid-item
+        class="grid-item"
+        @click="$router.push('/collectdetail?active=1')"
+      >
         <i slot="icon" class="toutiao toutiao-lishi"></i>
         <span slot="text" class="text">历史</span>
       </van-grid-item>

@@ -54,6 +54,11 @@ const routes = [
     path: '/followdetail',
     name: 'followdetail',
     component: () => import('@/views/FollowDetail.vue')
+  },
+  {
+    path: '/collectdetail',
+    name: 'collectdetail',
+    component: () => import('@/views/CollectDetail.vue')
   }
 ]
 

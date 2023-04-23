@@ -55,3 +55,27 @@ export const getUserFollowAPI = params => {
     params
   })
 }
+// 获取用户粉丝列表
+export const getUserFansAPI = params => {
+  return request({
+    method: 'GET',
+    url: '/v1_0/user/followers',
+    params
+  })
+}
+// 获取用户收藏列表
+export const getUserCollectAPI = params => {
+  return request({
+    method: 'GET',
+    url: '/v1_0/article/collections',
+    params
+  })
+}
+// 获取用户阅读历史列表
+export const getUserHistoriesAPI = params => {
+  return request({
+    method: 'GET',
+    url: '/v1_0/user/histories',
+    params
+  })
+}
